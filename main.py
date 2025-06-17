@@ -1,8 +1,9 @@
-from telethon import TelegramClient
+from telethon import TelegramClient, events
 from telethon.tl.types import MessageMediaPhoto, MessageMediaDocument
 import re
 import os
 import asyncio
+
 
 api_id = 29624898
 api_hash = '5b4a9c274b2d7bc48847d527b2721330'
