@@ -14,7 +14,7 @@ client = TelegramClient('second_forwarder_session', api_id, api_hash)
 
 KEYWORDS = ['tp1', 'tp2', 'tp3', 'sl']
 latest_signal_map = {}
-NEWSIGNAL_PATH = 'NEWSIGNAL.png'
+NEWSIGNAL_PATH = 'NEWSIGNALQS.png'
 id_map = {}
 
 
