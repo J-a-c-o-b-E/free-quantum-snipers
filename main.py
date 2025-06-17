@@ -4,7 +4,6 @@ import re
 import os
 import asyncio
 
-
 api_id = 29624898
 api_hash = '5b4a9c274b2d7bc48847d527b2721330'
 
@@ -18,14 +17,12 @@ latest_signal_map = {}
 NEWSIGNAL_PATH = 'NEWSIGNALQS.png'
 id_map = {}
 
-
 def is_video_or_gif(media):
     if isinstance(media, MessageMediaDocument):
         if media.document and media.document.mime_type:
             mime = media.document.mime_type.lower()
             return mime.startswith("video") or "gif" in mime
     return False
-
 
 def replace_embedded_links(text):
     if not text:
@@ -44,7 +41,6 @@ def replace_embedded_links(text):
         text
     )
 
-
 def replace_mentions(text):
     if not text:
         return text
@@ -53,11 +49,9 @@ def replace_mentions(text):
     text = replace_embedded_links(text)
     return text
 
-
 def build_fake_forward_text(msg):
     text = msg.text or ""
     return f"<b>Quantum Snipers Premium Group Member's Result:</b>\n\n{replace_mentions(text)}"
-
 
 async def handle_message(msg):
     if is_video_or_gif(msg.media):
@@ -108,23 +102,19 @@ async def handle_message(msg):
 
     id_map[msg.id] = sent.id
 
-
 @client.on(events.NewMessage(chats=source_channel))
 async def live_forward_handler(event):
     await handle_message(event.message)
 
-
 async def bootstrap():
     async for message in client.iter_messages(source_channel, limit=20):
         await handle_message(message)
-
 
 async def main():
     await client.start()
     await bootstrap()
     print("🚀 Bot is running 24/7...")
     await client.run_until_disconnected()
-
 
 if __name__ == "__main__":
     asyncio.run(main())
