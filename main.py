@@ -74,10 +74,10 @@ async def handle_message(msg):
 
     if "signal alert" in text:
         if os.path.exists(NEWSIGNAL_PATH):
-            sent = await client.send_file(target_channel, NEWSIGNAL_PATH, caption=modified_text, reply_to=reply_to, link_preview=False)
+            sent = await client.send_file(target_channel, NEWSIGNAL_PATH, caption=modified_text, reply_to=reply_to, link_preview=False, parse_mode='html')
             print(f"✅ SIGNAL ALERT image + caption sent — id {msg.id}")
         else:
-            sent = await client.send_message(target_channel, modified_text, reply_to=reply_to, link_preview=False)
+            sent = await client.send_message(target_channel, modified_text, reply_to=reply_to, link_preview=False, parse_mode='html')
             print(f"✅ SIGNAL ALERT text-only forwarded — id {msg.id}")
         id_map[msg.id] = sent.id
         return
@@ -85,19 +85,19 @@ async def handle_message(msg):
     if msg.forward:
         fake_caption = build_fake_forward_text(msg)
         if msg.media and isinstance(msg.media, (MessageMediaPhoto, MessageMediaDocument)):
-            sent = await client.send_file(target_channel, msg.media, caption=fake_caption, reply_to=reply_to, link_preview=False)
+            sent = await client.send_file(target_channel, msg.media, caption=fake_caption, reply_to=reply_to, link_preview=False, parse_mode='html')
             print(f"📸 Faked forward w/ media — id {msg.id}")
         else:
-            sent = await client.send_message(target_channel, fake_caption, reply_to=reply_to, link_preview=False)
+            sent = await client.send_message(target_channel, fake_caption, reply_to=reply_to, link_preview=False, parse_mode='html')
             print(f"✉️ Faked forward (text only) — id {msg.id}")
         id_map[msg.id] = sent.id
         return
 
     if msg.media and isinstance(msg.media, (MessageMediaPhoto, MessageMediaDocument)):
-        sent = await client.send_file(target_channel, msg.media, caption=modified_text, reply_to=reply_to, link_preview=False)
+        sent = await client.send_file(target_channel, msg.media, caption=modified_text, reply_to=reply_to, link_preview=False, parse_mode='html')
         print(f"🖼️ Generic media sent — id {msg.id}")
     else:
-        sent = await client.send_message(target_channel, modified_text, reply_to=reply_to, link_preview=False)
+        sent = await client.send_message(target_channel, modified_text, reply_to=reply_to, link_preview=False, parse_mode='html')
         print(f"📩 Generic text sent — id {msg.id}")
 
     id_map[msg.id] = sent.id
@@ -106,13 +106,8 @@ async def handle_message(msg):
 async def live_forward_handler(event):
     await handle_message(event.message)
 
-async def bootstrap():
-    async for message in client.iter_messages(source_channel, limit=20):
-        await handle_message(message)
-
 async def main():
     await client.start()
-    await bootstrap()
     print("🚀 Bot is running 24/7...")
     await client.run_until_disconnected()
 
