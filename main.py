@@ -33,7 +33,7 @@ def replace_embedded_links(text):
 
     def replacement(match):
         display_text = match.group(1).strip("*")
-        return f'[{display_text}](https://t.me/QuantumSnipers?text={encoded})'
+        return f'<a href="https://t.me/QuantumSnipers?text={encoded}">{display_text}</a>'
 
     return re.sub(
         r'\[([^\]]+)\]\(https?://[^)]+\)',
