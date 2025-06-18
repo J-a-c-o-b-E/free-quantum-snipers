@@ -49,9 +49,18 @@ def replace_mentions(text):
     text = replace_embedded_links(text)
     return text
 
+def markdown_to_html(text):
+    if not text:
+        return text
+    text = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', text)
+    text = re.sub(r'__(.*?)__', r'<b>\1</b>', text)
+    text = re.sub(r'\*(.*?)\*', r'<i>\1</i>', text)
+    text = re.sub(r'_(.*?)_', r'<i>\1</i>', text)
+    return text
+
 def build_fake_forward_text(msg):
     text = msg.text or ""
-    return f"<b>Quantum Snipers Premium Group Member's Result:</b>\n\n{replace_mentions(text)}"
+    return f"<b>Quantum Snipers Premium Group Member's Result:</b>\n\n{markdown_to_html(replace_mentions(text))}"
 
 async def handle_message(msg):
     if is_video_or_gif(msg.media):
@@ -66,7 +75,7 @@ async def handle_message(msg):
         print(f"⛔ Skipped due to blacklisted keyword — id {msg.id}")
         return
 
-    modified_text = replace_mentions(msg.text)
+    modified_text = markdown_to_html(replace_mentions(msg.text))
 
     reply_to = None
     if msg.reply_to_msg_id and msg.reply_to_msg_id in id_map:
