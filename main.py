@@ -10,7 +10,8 @@ api_hash = '5b4a9c274b2d7bc48847d527b2721330'
 source_channel = -1001541002369
 target_channel = -1002584918076
 
-client = TelegramClient('second_forwarder_session', api_id, api_hash)
+session_name = os.getenv("SESSION_NAME", "default_session")
+client = TelegramClient(session_name, api_id, api_hash)
 
 KEYWORDS = ['tp1', 'tp2', 'tp3', 'sl']
 latest_signal_map = {}
