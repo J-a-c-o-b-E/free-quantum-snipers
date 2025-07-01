@@ -1,7 +1,7 @@
-from telethon import TelegramClient
+from telethon import TelegramClient, events
 from telethon.tl.types import MessageMediaPhoto, MessageMediaDocument
-import re
 import os
+import re
 
 api_id = 29624898
 api_hash = '5b4a9c274b2d7bc48847d527b2721330'
@@ -9,8 +9,7 @@ api_hash = '5b4a9c274b2d7bc48847d527b2721330'
 source_channel = -1001541002369
 target_channel = -1002584918076
 
-# ✅ Use dynamic session name based on environment
-session_name = os.getenv("SESSION_NAME", "default_session")
+session_name = os.getenv("SESSION_NAME", "railway_session")
 client = TelegramClient(session_name, api_id, api_hash)
 
 KEYWORDS = ['tp1', 'tp2', 'tp3', 'sl']
@@ -28,18 +27,13 @@ def replace_embedded_links(text):
     if not text:
         return text
 
-    message = "I want to start making money with you for FREE 💰"
-    encoded = message.replace(" ", "%20")
+    link = "https://t.me/QuantumSnipers?text=I%20want%20to%20start%20making%20money%20with%20you%20for%20FREE"
 
     def replacement(match):
         display_text = match.group(1).strip("*")
-        return f'[{display_text}](https://t.me/QuantumSnipers?text={encoded})'
+        return f'[{display_text}]({link})'
 
-    return re.sub(
-        r'\[([^\]]+)\]\(https?://[^)]+\)',
-        replacement,
-        text
-    )
+    return re.sub(r'\[([^\]]+)\]\(https?://[^)]+\)', replacement, text)
 
 def replace_mentions(text):
     if not text:
@@ -65,9 +59,11 @@ async def main():
     async for message in client.iter_messages(source_channel, limit=100):
         messages.append(message)
 
-    messages.reverse()
+    print(f"✅ Pulled {len(messages)} messages from source_channel")
 
     for msg in messages:
+        print(f"📨 ID: {msg.id} | Text: {msg.text} | Media: {msg.media}")
+
         if is_video_or_gif(msg.media):
             print(f"⛔ Skipped GIF/video — id {msg.id}")
             continue
@@ -87,7 +83,7 @@ async def main():
                 await client.send_file(target_channel, NEWSIGNAL_PATH, caption=modified_text, link_preview=False)
                 print(f"✅ SIGNAL ALERT image + caption sent — id {msg.id}")
             else:
-                sent = await client.send_message(target_channel, modified_text, link_preview=False)
+                await client.send_message(target_channel, modified_text, link_preview=False)
                 print(f"✅ SIGNAL ALERT text-only forwarded — id {msg.id}")
             latest_signal_map[msg.id] = msg.id
             continue
@@ -123,9 +119,4 @@ async def main():
 
 if __name__ == "__main__":
     import asyncio
-
-    async def generate_session():
-        await client.start()  # <— this will trigger the login prompt
-        print(f"✅ Logged in — session saved as: {session_name}")
-
-    asyncio.run(generate_session())
+    asyncio.run(main())
